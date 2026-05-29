@@ -3,14 +3,16 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { SlidersHorizontal, Grid3X3, List, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button, Input, Badge } from "@/components/ui";
+import { SlidersHorizontal, Grid3X3, List, X, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Button, Input, Badge, Switch, Label } from "@/components/ui";
 import { ProductCard } from "@/features/products/product-card";
 import { featuredProducts } from "@/lib/mock-data";
 import {
   SORT_OPTIONS,
   PRICE_RANGES,
   ITEMS_PER_PAGE,
+  BRANDS,
+  RATINGS,
 } from "@/lib/constants";
 import {
   Select,
@@ -30,6 +32,11 @@ export function ShopPage() {
   );
   const [sortBy, setSortBy] = useState(searchParams.get("sort") || "newest");
   const [priceRange, setPriceRange] = useState<{ min: number; max?: number } | null>(null);
+  const [rating, setRating] = useState<number | null>(null);
+  const [brand, setBrand] = useState<string | null>(null);
+  const [onSale, setOnSale] = useState(false);
+  const [newArrivals, setNewArrivals] = useState(false);
+  const [trending, setTrending] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const categories = [
@@ -57,6 +64,21 @@ export function ShopPage() {
         return p.price >= priceRange.min;
       });
     }
+    if (rating !== null) {
+      products = products.filter((p) => p.rating >= rating);
+    }
+    if (brand) {
+      products = products.filter((p) => p.brand === brand);
+    }
+    if (onSale) {
+      products = products.filter((p) => p.comparePrice !== null);
+    }
+    if (newArrivals) {
+      products = products.filter((p) => p.isNew);
+    }
+    if (trending) {
+      products = products.filter((p) => p.isTrending);
+    }
     switch (sortBy) {
       case "price-asc":
         products.sort((a, b) => a.price - b.price);
@@ -78,7 +100,7 @@ export function ShopPage() {
         );
     }
     return products;
-  }, [search, selectedCategory, priceRange, sortBy]);
+  }, [search, selectedCategory, priceRange, rating, brand, onSale, newArrivals, trending, sortBy]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
@@ -89,7 +111,12 @@ export function ShopPage() {
   const activeFilterCount =
     (selectedCategory !== "all" ? 1 : 0) +
     (priceRange ? 1 : 0) +
-    (search ? 1 : 0);
+    (search ? 1 : 0) +
+    (rating !== null ? 1 : 0) +
+    (brand ? 1 : 0) +
+    (onSale ? 1 : 0) +
+    (newArrivals ? 1 : 0) +
+    (trending ? 1 : 0);
 
   const FilterSidebar = () => (
     <div className="space-y-8">
@@ -140,6 +167,74 @@ export function ShopPage() {
               {range.label}
             </button>
           ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-4 text-sm font-semibold">Rating</h3>
+        <div className="space-y-1">
+          {RATINGS.filter((r) => r < 5).map((stars) => (
+            <button
+              key={stars}
+              onClick={() => {
+                setRating(rating === stars ? null : stars);
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "block w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                rating === stars
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              <span className="inline-flex items-center gap-1">
+                {stars}
+                <Star className="h-3.5 w-3.5 fill-current" />
+                <span className="text-muted-foreground/60">& Up</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-4 text-sm font-semibold">Brand</h3>
+        <div className="space-y-1">
+          {BRANDS.map((b) => (
+            <button
+              key={b}
+              onClick={() => {
+                setBrand(brand === b ? null : b);
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "block w-full rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                brand === b
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              {b}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-4 text-sm font-semibold">Other</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm cursor-pointer">On Sale</Label>
+            <Switch checked={onSale} onCheckedChange={setOnSale} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm cursor-pointer">New Arrivals</Label>
+            <Switch checked={newArrivals} onCheckedChange={setNewArrivals} />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm cursor-pointer">Trending</Label>
+            <Switch checked={trending} onCheckedChange={setTrending} />
+          </div>
         </div>
       </div>
     </div>
@@ -219,7 +314,7 @@ export function ShopPage() {
         </div>
       </div>
 
-      {(search || selectedCategory !== "all" || priceRange) && (
+      {(search || selectedCategory !== "all" || priceRange || rating !== null || brand || onSale || newArrivals || trending) && (
         <div className="mb-6 flex flex-wrap gap-2">
           {search && (
             <Badge variant="secondary" className="gap-1 pr-1.5">
@@ -250,6 +345,63 @@ export function ShopPage() {
               )?.label || "Custom"}
               <button
                 onClick={() => setPriceRange(null)}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+              <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {rating !== null && (
+            <Badge variant="secondary" className="gap-1 pr-1.5">
+              <span className="inline-flex items-center gap-1">
+                {rating}<Star className="h-3 w-3 fill-current" />& Up
+              </span>
+              <button
+                onClick={() => setRating(null)}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+              <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {brand && (
+            <Badge variant="secondary" className="gap-1 pr-1.5">
+              {brand}
+              <button
+                onClick={() => setBrand(null)}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+              <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {onSale && (
+            <Badge variant="secondary" className="gap-1 pr-1.5">
+              On Sale
+              <button
+                onClick={() => setOnSale(false)}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+              <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {newArrivals && (
+            <Badge variant="secondary" className="gap-1 pr-1.5">
+              New Arrivals
+              <button
+                onClick={() => setNewArrivals(false)}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+              <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {trending && (
+            <Badge variant="secondary" className="gap-1 pr-1.5">
+              Trending
+              <button
+                onClick={() => setTrending(false)}
                 className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
               >
               <X className="h-3 w-3" />
@@ -313,6 +465,11 @@ export function ShopPage() {
                     onClick={() => {
                       setSelectedCategory("all");
                       setPriceRange(null);
+                      setRating(null);
+                      setBrand(null);
+                      setOnSale(false);
+                      setNewArrivals(false);
+                      setTrending(false);
                       setSearch("");
                       setIsFilterOpen(false);
                     }}
@@ -346,6 +503,11 @@ export function ShopPage() {
                     setSearch("");
                     setSelectedCategory("all");
                     setPriceRange(null);
+                    setRating(null);
+                    setBrand(null);
+                    setOnSale(false);
+                    setNewArrivals(false);
+                    setTrending(false);
                   }}
                 >
                   Clear Filters

@@ -23,6 +23,8 @@ export const PRICE_RANGES = [
 
 export const RATINGS = [5, 4, 3, 2, 1] as const;
 
+export const BRANDS = ["LUXE", "Artisan", "Nordic"] as const;
+
 export const ITEMS_PER_PAGE = 12;
 
 export const SHIPPING_COST = 9.99;

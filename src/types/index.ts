@@ -32,6 +32,11 @@ export interface ProductFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
+  minRating?: number;
+  brand?: string;
+  onSale?: boolean;
+  newArrivals?: boolean;
+  trending?: boolean;
   sort?: string;
   page?: number;
   pageSize?: number;
