@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Lock, ChevronLeft, ShoppingBag } from "lucide-react";
+import { Lock, ChevronLeft, Mail, MapPin, ShoppingBag, Trash2 } from "lucide-react";
 import { Button, Input, Label, Separator } from "@/components/ui";
 import { useCartStore } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 export function CheckoutPage() {
   const router = useRouter();
-  const { items, getSubtotal, clearCart } = useCartStore();
+  const { items, getSubtotal, clearCart, removeItem } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,22 +25,39 @@ export function CheckoutPage() {
     state: "",
     zipCode: "",
     phone: "",
-    sameAsBilling: true,
   });
 
   useEffect(() => {
     setMounted(true);
-    if (items.length === 0) {
-      router.push("/cart");
-    }
-  }, [items.length, router]);
+  }, []);
 
   const subtotal = getSubtotal();
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal + shipping;
 
-  if (!mounted || items.length === 0) {
+  if (!mounted) {
     return null;
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="mb-6 rounded-2xl bg-muted p-6">
+            <ShoppingBag className="mx-auto h-10 w-10 text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-semibold">Your cart is empty</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Add some items to your cart before checking out.
+          </p>
+          <Link href="/shop">
+            <Button className="mt-6 rounded-xl">
+              Continue Shopping
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,8 +69,12 @@ export function CheckoutPage() {
     router.push("/dashboard/orders");
   };
 
+  const updateField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -61,39 +82,45 @@ export function CheckoutPage() {
       >
         <Link
           href="/cart"
-          className="mb-8 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          className="mb-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
           Back to Cart
         </Link>
 
-        <div className="grid gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            <h1 className="text-3xl font-bold tracking-tight">Checkout</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Checkout</h1>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-8">
-              <div className="rounded-2xl border p-6">
-                <h2 className="mb-6 text-lg font-semibold">Contact</h2>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      className="mt-1.5"
-                      placeholder="you@example.com"
-                    />
+        <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:gap-12">
+          <div className="lg:col-span-3">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="rounded-2xl border p-4 sm:p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <Mail className="h-4 w-4 text-primary" />
                   </div>
+                  <h2 className="text-base font-semibold sm:text-lg">Contact</h2>
+                </div>
+                <div>
+                  <Label htmlFor="email">Email address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => updateField("email", e.target.value)}
+                    className="mt-1.5"
+                    placeholder="you@example.com"
+                  />
                 </div>
               </div>
 
-              <div className="rounded-2xl border p-6">
-                <h2 className="mb-6 text-lg font-semibold">Shipping</h2>
+              <div className="rounded-2xl border p-4 sm:p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <MapPin className="h-4 w-4 text-primary" />
+                  </div>
+                  <h2 className="text-base font-semibold sm:text-lg">Shipping</h2>
+                </div>
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
@@ -102,12 +129,7 @@ export function CheckoutPage() {
                         id="firstName"
                         required
                         value={formData.firstName}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            firstName: e.target.value,
-                          })
-                        }
+                        onChange={(e) => updateField("firstName", e.target.value)}
                         className="mt-1.5"
                       />
                     </div>
@@ -117,12 +139,7 @@ export function CheckoutPage() {
                         id="lastName"
                         required
                         value={formData.lastName}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            lastName: e.target.value,
-                          })
-                        }
+                        onChange={(e) => updateField("lastName", e.target.value)}
                         className="mt-1.5"
                       />
                     </div>
@@ -133,10 +150,9 @@ export function CheckoutPage() {
                       id="street"
                       required
                       value={formData.street}
-                      onChange={(e) =>
-                        setFormData({ ...formData, street: e.target.value })
-                      }
+                      onChange={(e) => updateField("street", e.target.value)}
                       className="mt-1.5"
+                      placeholder="123 Main St"
                     />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">
@@ -146,9 +162,7 @@ export function CheckoutPage() {
                         id="city"
                         required
                         value={formData.city}
-                        onChange={(e) =>
-                          setFormData({ ...formData, city: e.target.value })
-                        }
+                        onChange={(e) => updateField("city", e.target.value)}
                         className="mt-1.5"
                       />
                     </div>
@@ -158,9 +172,7 @@ export function CheckoutPage() {
                         id="state"
                         required
                         value={formData.state}
-                        onChange={(e) =>
-                          setFormData({ ...formData, state: e.target.value })
-                        }
+                        onChange={(e) => updateField("state", e.target.value)}
                         className="mt-1.5"
                       />
                     </div>
@@ -170,9 +182,7 @@ export function CheckoutPage() {
                         id="zipCode"
                         required
                         value={formData.zipCode}
-                        onChange={(e) =>
-                          setFormData({ ...formData, zipCode: e.target.value })
-                        }
+                        onChange={(e) => updateField("zipCode", e.target.value)}
                         className="mt-1.5"
                       />
                     </div>
@@ -183,9 +193,7 @@ export function CheckoutPage() {
                       id="phone"
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
+                      onChange={(e) => updateField("phone", e.target.value)}
                       className="mt-1.5"
                     />
                   </div>
@@ -195,7 +203,7 @@ export function CheckoutPage() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full rounded-2xl"
+                className="w-full rounded-2xl h-14 text-base"
                 disabled={isProcessing}
               >
                 {isProcessing ? (
@@ -229,33 +237,42 @@ export function CheckoutPage() {
           </div>
 
           <div className="lg:col-span-2">
-            <div className="sticky top-24 rounded-2xl border p-6">
-              <h3 className="text-lg font-semibold">Order Summary</h3>
+            <div className="lg:sticky lg:top-24 rounded-2xl border p-4 sm:p-6">
+              <h3 className="text-base font-semibold sm:text-lg">Order Summary</h3>
 
-              <div className="mt-6 space-y-4">
+              <div className="mt-5 divide-y">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                  <div key={item.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
+                    <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800">
                       <div
                         className="h-full w-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${item.image})` }}
                       />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{item.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         Qty: {item.quantity}
                       </p>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium mt-1">
                         {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
+                    <button
+                      onClick={() => {
+                        removeItem(item.id);
+                        toast.success("Removed from cart");
+                      }}
+                      className="self-center p-1 text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 ))}
               </div>
 
-              <Separator className="my-6" />
-              <div className="space-y-2">
+              <Separator className="my-5" />
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
@@ -263,11 +280,20 @@ export function CheckoutPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>
-                    {shipping === 0 ? "Free" : formatPrice(shipping)}
+                    {shipping === 0 ? (
+                      <span className="text-green-600 dark:text-green-400 font-medium">Free</span>
+                    ) : (
+                      formatPrice(shipping)
+                    )}
                   </span>
                 </div>
+                {shipping > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Free shipping on orders over {formatPrice(FREE_SHIPPING_THRESHOLD)}
+                  </p>
+                )}
                 <Separator />
-                <div className="flex justify-between text-lg font-semibold">
+                <div className="flex justify-between text-base sm:text-lg font-semibold">
                   <span>Total</span>
                   <span>{formatPrice(total)}</span>
                 </div>
