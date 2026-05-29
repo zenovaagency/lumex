@@ -1,0 +1,218 @@
+{
+  "users": [
+    {
+      "id": "user-1",
+      "email": "admin@luxe.com",
+      "password": "admin123",
+      "name": "Admin User",
+      "role": "ADMIN",
+      "image": null,
+      "phone": "",
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user-2",
+      "email": "user@luxe.com",
+      "password": "user123",
+      "name": "John Doe",
+      "role": "USER",
+      "image": null,
+      "phone": "+1 (555) 123-4567",
+      "createdAt": "2025-03-15T00:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Clothing",
+      "slug": "clothing",
+      "description": "Premium apparel for every occasion",
+      "image": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&q=80",
+      "productCount": 48
+    },
+    {
+      "id": "cat-2",
+      "name": "Accessories",
+      "slug": "accessories",
+      "description": "Complete your look with our accessories",
+      "image": "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&q=80",
+      "productCount": 36
+    },
+    {
+      "id": "cat-3",
+      "name": "Home & Living",
+      "slug": "home-living",
+      "description": "Beautiful objects for your space",
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
+      "productCount": 24
+    },
+    {
+      "id": "cat-4",
+      "name": "Footwear",
+      "slug": "footwear",
+      "description": "Step out in style",
+      "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80",
+      "productCount": 30
+    },
+    {
+      "id": "cat-5",
+      "name": "Bags",
+      "slug": "bags",
+      "description": "Carry your essentials with elegance",
+      "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80",
+      "productCount": 18
+    },
+    {
+      "id": "cat-6",
+      "name": "Jewelry",
+      "slug": "jewelry",
+      "description": "Timeless pieces for every moment",
+      "image": "https://images.unsplash.com/photo-1515562141589-491e5bf25e96?w=600&q=80",
+      "productCount": 42
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-1",
+      "name": "Premium Cotton Tee",
+      "slug": "premium-cotton-tee",
+      "description": "Crafted from the finest organic cotton, this timeless tee offers exceptional comfort and durability. Features a relaxed fit with reinforced seams.",
+      "price": 68,
+      "comparePrice": 89,
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80",
+        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80",
+        "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80"
+      ],
+      "rating": 4.8,
+      "reviewCount": 156,
+      "category": "clothing",
+      "isNew": true,
+      "isTrending": true
+    },
+    {
+      "id": "prod-2",
+      "name": "Wool Blend Blazer",
+      "slug": "wool-blend-blazer",
+      "description": "A sophisticated blazer crafted from a luxurious wool blend. Perfect for both formal occasions and smart casual wear.",
+      "price": 295,
+      "comparePrice": 395,
+      "image": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80",
+        "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=600&q=80"
+      ],
+      "rating": 4.9,
+      "reviewCount": 89,
+      "category": "clothing",
+      "isNew": false,
+      "isTrending": true
+    },
+    {
+      "id": "prod-3",
+      "name": "Leather Crossbody Bag",
+      "slug": "leather-crossbody-bag",
+      "description": "Handcrafted from full-grain Italian leather, this crossbody bag ages beautifully and develops a unique patina over time.",
+      "price": 189,
+      "comparePrice": null,
+      "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
+        "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=600&q=80"
+      ],
+      "rating": 4.7,
+      "reviewCount": 234,
+      "category": "bags",
+      "isNew": true,
+      "isTrending": true
+    },
+    {
+      "id": "prod-4",
+      "name": "Minimalist Watch",
+      "slug": "minimalist-watch",
+      "description": "A refined timepiece with a clean dial and premium Japanese movement. The sapphire crystal and Italian leather strap ensure lasting quality.",
+      "price": 249,
+      "comparePrice": 299,
+      "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=600&q=80",
+        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&q=80"
+      ],
+      "rating": 4.6,
+      "reviewCount": 312,
+      "category": "accessories",
+      "isNew": false,
+      "isTrending": true
+    },
+    {
+      "id": "prod-5",
+      "name": "Cashmere Crew Neck",
+      "slug": "cashmere-crew-neck",
+      "description": "Luxuriously soft cashmere sweater sourced from Inner Mongolia. Lightweight yet warm, perfect for layering.",
+      "price": 198,
+      "comparePrice": 250,
+      "image": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80"
+      ],
+      "rating": 4.9,
+      "reviewCount": 178,
+      "category": "clothing",
+      "isNew": false,
+      "isTrending": false
+    },
+    {
+      "id": "prod-6",
+      "name": "Ceramic Pour-Over Set",
+      "slug": "ceramic-pour-over-set",
+      "description": "Artisan-crafted ceramic pour-over coffee set. Each piece is hand-thrown and glazed, making every set unique.",
+      "price": 85,
+      "comparePrice": null,
+      "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80"
+      ],
+      "rating": 4.5,
+      "reviewCount": 67,
+      "category": "home-living",
+      "isNew": true,
+      "isTrending": false
+    },
+    {
+      "id": "prod-7",
+      "name": "Italian Leather Sneakers",
+      "slug": "italian-leather-sneakers",
+      "description": "Handcrafted in Italy from the finest calfskin leather. These minimalist sneakers combine comfort with understated elegance.",
+      "price": 345,
+      "comparePrice": 420,
+      "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80"
+      ],
+      "rating": 4.7,
+      "reviewCount": 145,
+      "category": "footwear",
+      "isNew": false,
+      "isTrending": true
+    },
+    {
+      "id": "prod-8",
+      "name": "Silk Scarf",
+      "slug": "silk-scarf",
+      "description": "Hand-rolled edges and digitally printed patterns on the finest mulberry silk. A versatile accessory that elevates any outfit.",
+      "price": 95,
+      "comparePrice": 125,
+      "image": "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&q=80"
+      ],
+      "rating": 4.4,
+      "reviewCount": 89,
+      "category": "accessories",
+      "isNew": true,
+      "isTrending": false
+    }
+  ],
+  "orders": []
+}

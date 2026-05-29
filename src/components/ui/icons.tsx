@@ -1,0 +1,30 @@
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  Heart,
+  MapPin,
+  User,
+  Bell,
+  Package,
+  FolderTree,
+  Users,
+  Percent,
+  FileText,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
+
+export const iconMap: Record<string, LucideIcon> = {
+  LayoutDashboard,
+  ShoppingBag,
+  Heart,
+  MapPin,
+  User,
+  Bell,
+  Package,
+  FolderTree,
+  Users,
+  Percent,
+  FileText,
+  Settings,
+};
